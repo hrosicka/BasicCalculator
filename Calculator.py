@@ -44,32 +44,50 @@ frame.pack()
 
 # Vytvoření pole pro zadávání výrazu
 expression_entry = Entry(frame, width=30)
-expression_entry.pack()
-
-# Vytvoření tlačítek pro číslice
-for i in range(10):
-    button = Button(frame, text=str(i), command=lambda i=i: update_expression(str(i)))
-    button.pack(side=LEFT)
-
-# Vytvoření tlačítek pro operátory
-operators = ["+", "-", "*", "/"]
-for operator in operators:
-    button = Button(frame, text=operator, command=lambda operator=operator: update_expression(operator))
-    button.pack(side=LEFT)
-
-# Vytvoření tlačítek pro výpočet a mazání
-equals_button = Button(frame, text="=", command=lambda: update_result(evaluate(expression_entry.get())))
-equals_button.pack(side=LEFT)
-
-c_button = Button(frame, text="C", command=clear_all)
-c_button.pack(side=LEFT)
-
-ce_button = Button(frame, text="CE", command=clear_last)
-ce_button.pack(side=LEFT)
+expression_entry.pack(side=TOP)
 
 # Vytvoření pole pro zobrazení výsledku
 result_entry = Entry(frame, width=30)
-result_entry.pack()
+result_entry.pack(side=TOP)
+
+# Vytvoření rámečku pro tlačítka s číslicemi
+number_frame = Frame(frame)
+number_frame.pack(side=LEFT)
+
+# Vytvoření tlačítek pro číslice se zvýšenou velikostí
+for i in range(10):
+    button = Button(number_frame, text=str(i), command=lambda i=i: update_expression(str(i)), width=5, height=2)
+    button.grid(row=i // 3, column=i % 3)
+
+# Vytvoření rámečku pro operátory
+operator_frame = Frame(frame)
+operator_frame.pack(side=LEFT)
+
+operators = ["+", "-", "*", "/"]
+
+# Vytvoření tlačítek pro operátory se zvýšenou velikostí
+for operator in operators:
+    button = Button(operator_frame, text=operator, command=lambda operator=operator: update_expression(operator), bg="orange", width=5, height=2)
+    button.pack(side=TOP)
+
+# Vytvoření rámečku pro tlačítka výpočtu a mazání
+calculation_frame = Frame(frame)
+calculation_frame.pack(side=LEFT)
+
+# Vytvoření rámečku pro tlačítka výpočtu a mazání
+calculation_frame = Frame(frame)
+calculation_frame.pack(side=LEFT)
+
+# Vytvoření tlačítek pro výpočet a mazání
+equals_button = Button(calculation_frame, text="=", command=lambda: update_result(evaluate(expression_entry.get())), bg="plum", width=5, height=4)
+equals_button.pack(side=TOP)
+
+c_button = Button(calculation_frame, text="C", command=clear_all, bg="plum", width=5, height=2)
+c_button.pack(side=TOP)
+
+ce_button = Button(calculation_frame, text="CE", command=clear_last, bg="plum", width=5, height=2)
+ce_button.pack(side=TOP)
+
 
 # Spuštění okna kalkulačky
 window.mainloop()
