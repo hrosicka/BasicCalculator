@@ -40,7 +40,7 @@ class Calculator(tk.Tk):
     def __init__(self):
         super().__init__()
         # Set window title
-        self.title("Kalkulačka")
+        self.title("Calculator")
 
         # Create a frame to hold all widgets
         self.frame = Frame(self)
