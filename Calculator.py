@@ -1,5 +1,18 @@
-from tkinter import *
+from ctypes import windll
+windll.shcore.SetProcessDpiAwareness(1)
+
+import tkinter as tk
 import random
+
+from tkinter import (
+    Button,
+    Entry,
+    Frame,
+    END,
+    INSERT,
+    LEFT,
+    TOP,
+)
 
 palette = [
     "#f5f5f5", "#e8e8e8", "#dcdcdc",
@@ -17,114 +30,123 @@ palette = [
     "#f7f7f7", "#f0f0f0", "#e6e6e6",
 ]
 
-# Funkce pro vyhodnocení zadaného výrazu
-def evaluate(expression):
-    if expression and expression[-1] in ["+", "-", "*", "/"]:
-        return "Chybný výraz"
-    if not expression:
-        return "Zadejte výraz"
-    try:
-        return eval(expression)
-    except:
-        return "Chybný výraz"
+class Calculator(tk.Tk):
 
-# Funkce pro aktualizaci pole s výsledkem
-def update_result(result):
-    result_entry.delete(0, END)
-    result_entry.insert(0, result)
+    def __init__(self):
+        super().__init__()
+        self.title("Kalkulačka")
 
-# Funkce pro aktualizaci pole s výrazem
-def update_expression(char):
-    current_expression = expression_entry.get()
-    cursor_position = expression_entry.index(INSERT)
-    new_expression = current_expression[:cursor_position] + char + current_expression[cursor_position:]
-    expression_entry.delete(0, END)
-    expression_entry.insert(0, new_expression)
+        # Vytvoření rámečku pro uspořádání widgetů
+        self.frame = Frame(self)
+        self.frame.pack()
 
-# Funkce pro vymazání celého výrazu
-def clear_all():
-    expression_entry.delete(0, END)
+        self.resizable(False, False) 
 
-# Funkce pro vymazání posledního znaku
-def clear_last():
-    expression = expression_entry.get()
-    expression_entry.delete(0, END)
-    expression_entry.insert(0, expression[:-1])
+        self.icon_path = "calc_icon.ico"  
+        self.iconbitmap(self.icon_path)  
 
-# Vytvoření okna kalkulačky
-window = Tk()
-window.title("Kalkulačka")
+        # Vytvoření pole pro zadávání výrazu
+        self.expression_entry = Entry(self.frame, width=30, justify="right")
+        self.expression_entry.pack(side=TOP)
 
-# Vytvoření rámečku pro uspořádání widgetů
-frame = Frame(window)
-frame.pack()
+        # Vytvoření pole pro zobrazení výsledku
+        self.result_entry = Entry(self.frame, width=30, justify="right")
+        self.result_entry.pack(side=TOP)
 
-# Vytvoření pole pro zadávání výrazu
-expression_entry = Entry(frame, width=30)
-expression_entry.pack(side=TOP)
+        # Vytvoření rámečku pro tlačítka s číslicemi
+        self.number_frame = Frame(self.frame)
+        self.number_frame.pack(side=LEFT)
 
-# Vytvoření pole pro zobrazení výsledku
-result_entry = Entry(frame, width=30)
-result_entry.pack(side=TOP)
+        # Vytvoření tlačítek pro číslice se zvýšenou velikostí
+        for i in range(10):
+            button = Button(self.number_frame, text=str(i), command=lambda i=i: self.update_expression(str(i)), width=6, height=2)
+            button.grid(row=i // 3, column=i % 3)
 
-# Vytvoření rámečku pro tlačítka s číslicemi
-number_frame = Frame(frame)
-number_frame.pack(side=LEFT)
+        # Vytvoření tlačítka pro desetinnou tečku
+        self.dot_button = Button(self.number_frame, text=".", command=lambda: self.update_expression("."), width=6, height=2)
+        self.dot_button.grid(row=3, column=2)
 
-# Vytvoření tlačítek pro číslice se zvýšenou velikostí
-for i in range(10):
-    button = Button(number_frame, text=str(i), command=lambda i=i: update_expression(str(i)), width=5, height=2)
-    button.grid(row=i // 3, column=i % 3)
+        # Vytvoření rámečku pro operátory
+        self.operator_frame = Frame(self.frame)
+        self.operator_frame.pack(side=LEFT)
 
-# Vytvoření tlačítka pro desetinnou tečku
-dot_button = Button(number_frame, text=".", command=lambda: update_expression("."), width=5, height=2)
-dot_button.grid(row=3, column=2)
+        operators = ["+", "-", "*", "/"]
 
-# Vytvoření rámečku pro operátory
-operator_frame = Frame(frame)
-operator_frame.pack(side=LEFT)
+        # Vytvoření tlačítek pro operátory se zvýšenou velikostí
+        for operator in operators:
+            button = Button(self.operator_frame, text=operator, command=lambda operator=operator: self.update_expression(operator), bg="#FFE4C4", width=6, height=2)
+            button.pack(side=TOP)
 
-operators = ["+", "-", "*", "/"]
+        # Vytvoření rámečku pro tlačítka výpočtu a mazání
+        self.calculation_frame = Frame(self.frame)
+        self.calculation_frame.pack(side=LEFT)
 
-# Vytvoření tlačítek pro operátory se zvýšenou velikostí
-for operator in operators:
-    button = Button(operator_frame, text=operator, command=lambda operator=operator: update_expression(operator), bg="#FFE4C4", width=5, height=2)
-    button.pack(side=TOP)
+        # Vytvoření tlačítek pro výpočet a mazání
+        self.equals_button = Button(self.calculation_frame, text="=", command=lambda: self.update_result(self.evaluate(self.expression_entry.get())), bg="plum", width=6, height=2)
+        self.equals_button.pack(side=TOP)
 
-# Vytvoření rámečku pro tlačítka výpočtu a mazání
-calculation_frame = Frame(frame)
-calculation_frame.pack(side=LEFT)
+        self.c_button = Button(self.calculation_frame, text="C", command=self.clear_all, bg="plum", width=6, height=2)
+        self.c_button.pack(side=TOP)
 
-# Vytvoření rámečku pro tlačítka výpočtu a mazání
-calculation_frame = Frame(frame)
-calculation_frame.pack(side=LEFT)
+        self.ce_button = Button(self.calculation_frame, text="CE", command=self.clear_last, bg="plum", width=6, height=2)
+        self.ce_button.pack(side=TOP)
 
-# Vytvoření tlačítek pro výpočet a mazání
-equals_button = Button(calculation_frame, text="=", command=lambda: update_result(evaluate(expression_entry.get())), bg="plum", width=5, height=2)
-equals_button.pack(side=TOP)
+        # Vytvoření tlačítka pro generování barev
+        self.generate_colors_button = Button(self.calculation_frame, text="Colors", command=self.randomize_colors, bg="plum", width=6, height=2)
+        self.generate_colors_button.pack(side=TOP)
 
-c_button = Button(calculation_frame, text="C", command=clear_all, bg="plum", width=5, height=2)
-c_button.pack(side=TOP)
+        # Inicializace proměnných
+        self.current_expression = ""
+        self.previous_expression = ""
+        self.result = 0
 
-ce_button = Button(calculation_frame, text="CE", command=clear_last, bg="plum", width=5, height=2)
-ce_button.pack(side=TOP)
+    # Funkce pro vyhodnocení zadaného výrazu
+    def evaluate(self, expression):
+        if expression and expression[-1] in ["+", "-", "*", "/"]:
+            return "Chybný výraz"
+        if not expression:
+            return "Zadejte výraz"
+        try:
+            return eval(expression)
+        except:
+            return "Chybný výraz"
 
-def randomize_colors():
-    for button in operator_frame.pack_slaves():
-        button["bg"] = random.choice(palette)
-    for i in range(10):
-        button = number_frame.grid_slaves(row=i // 3, column=i % 3)[0]
-        button["bg"] = random.choice(palette)
-    equals_button["bg"] = random.choice(palette)
-    c_button["bg"] = random.choice(palette)
-    ce_button["bg"] = random.choice(palette)
+    # Funkce pro aktualizaci pole s výsledkem
+    def update_result(self, result):
+        self.result_entry.delete(0, END)
+        self.result_entry.insert(0, result)
 
+    # Funkce pro aktualizaci pole s výrazem
+    def update_expression(self, char):
+        self.current_expression = self.expression_entry.get()
+        cursor_position = self.expression_entry.index(INSERT)
+        new_expression = self.current_expression[:cursor_position] + char + self.current_expression[cursor_position:]
+        self.expression_entry.delete(0, END)
+        self.expression_entry.insert(0, new_expression)
 
-# Vytvoření tlačítka pro generování barev
-generate_colors_button = Button(calculation_frame, text="Generovat barvy", command=randomize_colors, bg="plum", width=5, height=2)
-generate_colors_button.pack(side=TOP)
+    # Funkce pro vymazání celého výrazu
+    def clear_all(self):
+        self.expression_entry.delete(0, END)
 
+    # Funkce pro vymazání posledního znaku
+    def clear_last(self):
+        expression = self.expression_entry.get()
+        self.expression_entry.delete(0, END)
+        self.expression_entry.insert(0, expression[:-1])
 
+    # Funkce pro generování barev
+    def randomize_colors(self):
+        for button in self.operator_frame.pack_slaves():
+            button["bg"] = random.choice(palette)
+        for i in range(10):
+            button = self.number_frame.grid_slaves(row=i // 3, column=i % 3)[0]
+            button["bg"] = random.choice(palette)
+        self.dot_button["bg"] = random.choice(palette)
+        self.equals_button["bg"] = random.choice(palette)
+        self.c_button["bg"] = random.choice(palette)
+        self.ce_button["bg"] = random.choice(palette)
+        self.generate_colors_button["bg"] = random.choice(palette)
 
-# Spuštění okna kalkulačky
-window.mainloop()
+# Spuštění kalkulačky
+calculator = Calculator()
+calculator.mainloop()
