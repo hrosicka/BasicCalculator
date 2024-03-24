@@ -1,3 +1,4 @@
+# Improves DPI awareness for high-resolution displays
 from ctypes import windll
 windll.shcore.SetProcessDpiAwareness(1)
 
@@ -14,6 +15,7 @@ from tkinter import (
     TOP,
 )
 
+# Color palette for buttons
 palette = [
     "#f5f5f5", "#e8e8e8", "#dcdcdc",
     "#fffacd", "#ffebcd", "#f7f7bd",
@@ -34,73 +36,79 @@ class Calculator(tk.Tk):
 
     def __init__(self):
         super().__init__()
+        # Set window title
         self.title("Kalkulačka")
 
-        # Vytvoření rámečku pro uspořádání widgetů
+        # Create a frame to hold all widgets
         self.frame = Frame(self)
         self.frame.pack()
 
+        # Prevent user from resizing the window
         self.resizable(False, False) 
 
+        # Set window icon (if "calc_icon.ico" exists)
         self.icon_path = "calc_icon.ico"  
         self.iconbitmap(self.icon_path)  
 
-        # Vytvoření pole pro zadávání výrazu
+        # Entry widget for user to input expression (right-aligned)
         self.expression_entry = Entry(self.frame, width=30, justify="right")
         self.expression_entry.pack(side=TOP)
 
-        # Vytvoření pole pro zobrazení výsledku
+        # Entry widget to display the result (right-aligned)
         self.result_entry = Entry(self.frame, width=30, justify="right")
         self.result_entry.pack(side=TOP)
 
-        # Vytvoření rámečku pro tlačítka s číslicemi
+         # Frame to hold number buttons
         self.number_frame = Frame(self.frame)
         self.number_frame.pack(side=LEFT)
 
-        # Vytvoření tlačítek pro číslice se zvýšenou velikostí
+        # Create number buttons with increased size
         for i in range(10):
             button = Button(self.number_frame, text=str(i), command=lambda i=i: self.update_expression(str(i)), width=6, height=2)
             button.grid(row=i // 3, column=i % 3)
 
-        # Vytvoření tlačítka pro desetinnou tečku
+        # Button for decimal point
         self.dot_button = Button(self.number_frame, text=".", command=lambda: self.update_expression("."), width=6, height=2)
         self.dot_button.grid(row=3, column=2)
 
-        # Vytvoření rámečku pro operátory
+        # Frame to hold operator buttons
         self.operator_frame = Frame(self.frame)
         self.operator_frame.pack(side=LEFT)
 
+        # List of operators
         operators = ["+", "-", "*", "/"]
 
-        # Vytvoření tlačítek pro operátory se zvýšenou velikostí
+        # Create operator buttons with increased size and light yellow background
         for operator in operators:
             button = Button(self.operator_frame, text=operator, command=lambda operator=operator: self.update_expression(operator), bg="#FFE4C4", width=6, height=2)
             button.pack(side=TOP)
 
-        # Vytvoření rámečku pro tlačítka výpočtu a mazání
+        # Frame to hold buttons for calculation and clearing
         self.calculation_frame = Frame(self.frame)
         self.calculation_frame.pack(side=LEFT)
 
-        # Vytvoření tlačítek pro výpočet a mazání
+        # Button to evaluate the expression (light plum background)
         self.equals_button = Button(self.calculation_frame, text="=", command=lambda: self.update_result(self.evaluate(self.expression_entry.get())), bg="plum", width=6, height=2)
         self.equals_button.pack(side=TOP)
 
+        # Button to clear the entire expression (light plum background)
         self.c_button = Button(self.calculation_frame, text="C", command=self.clear_all, bg="plum", width=6, height=2)
         self.c_button.pack(side=TOP)
 
+        # Button to clear the last character (light plum background)
         self.ce_button = Button(self.calculation_frame, text="CE", command=self.clear_last, bg="plum", width=6, height=2)
         self.ce_button.pack(side=TOP)
 
-        # Vytvoření tlačítka pro generování barev
+        # Button to generate random colors for buttons (light plum background)
         self.generate_colors_button = Button(self.calculation_frame, text="Colors", command=self.randomize_colors, bg="plum", width=6, height=2)
         self.generate_colors_button.pack(side=TOP)
 
-        # Inicializace proměnných
+        # Initialize variables
         self.current_expression = ""
         self.previous_expression = ""
         self.result = 0
 
-    # Funkce pro vyhodnocení zadaného výrazu
+    # Function to evaluate the entered expression
     def evaluate(self, expression):
         if expression and expression[-1] in ["+", "-", "*", "/"]:
             return "Chybný výraz"
@@ -111,12 +119,12 @@ class Calculator(tk.Tk):
         except:
             return "Chybný výraz"
 
-    # Funkce pro aktualizaci pole s výsledkem
+    # Function to update the result entry widget
     def update_result(self, result):
         self.result_entry.delete(0, END)
         self.result_entry.insert(0, result)
 
-    # Funkce pro aktualizaci pole s výrazem
+    # Function to update the expression entry widget
     def update_expression(self, char):
         self.current_expression = self.expression_entry.get()
         cursor_position = self.expression_entry.index(INSERT)
@@ -124,17 +132,17 @@ class Calculator(tk.Tk):
         self.expression_entry.delete(0, END)
         self.expression_entry.insert(0, new_expression)
 
-    # Funkce pro vymazání celého výrazu
+    # Function to clear the entire expression
     def clear_all(self):
         self.expression_entry.delete(0, END)
 
-    # Funkce pro vymazání posledního znaku
+     # Function to clear the last character
     def clear_last(self):
         expression = self.expression_entry.get()
         self.expression_entry.delete(0, END)
         self.expression_entry.insert(0, expression[:-1])
 
-    # Funkce pro generování barev
+    # Function to generate random colors for buttons
     def randomize_colors(self):
         for button in self.operator_frame.pack_slaves():
             button["bg"] = random.choice(palette)
@@ -147,6 +155,7 @@ class Calculator(tk.Tk):
         self.ce_button["bg"] = random.choice(palette)
         self.generate_colors_button["bg"] = random.choice(palette)
 
-# Spuštění kalkulačky
+
+# Run the calculator
 calculator = Calculator()
 calculator.mainloop()
