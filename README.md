@@ -1,6 +1,8 @@
 # Simple Calculator with GUI and Fun Color Feature!
 This Python program features basic arithmetic operations and a fun random color button to change the button colors.
 
+![](https://github.com/hrosicka/BasicCalculator/blob/master/Doc/BasicCalculator.png)
+
 
 ## Features:
 
