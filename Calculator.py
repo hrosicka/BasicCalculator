@@ -150,12 +150,14 @@ class Calculator(tk.Tk):
     # Function to clear the entire expression
     def clear_all(self):
         self.expression_entry.delete(0, END)
+        self.result_entry.delete(0, END)
 
      # Function to clear the last character
     def clear_last(self):
         expression = self.expression_entry.get()
         self.expression_entry.delete(0, END)
         self.expression_entry.insert(0, expression[:-1])
+        self.result_entry.delete(0, END)
 
     # Function to generate random colors for buttons
     def randomize_colors(self):
