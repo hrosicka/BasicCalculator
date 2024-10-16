@@ -62,7 +62,7 @@ class Calculator(tk.Tk):
         Hovertip(self.expression_entry, self.expression_entry_tooltip)
 
         # Entry widget to display the result (right-aligned)
-        self.result_entry = Entry(self.frame, width=30, justify="right")
+        self.result_entry = Entry(self.frame, width=30, justify="right", state="readonly")
         self.result_entry.pack(side=TOP)
 
         # Tooltip for display the result
@@ -136,8 +136,10 @@ class Calculator(tk.Tk):
 
     # Function to update the result entry widget
     def update_result(self, result):
+        self.result_entry['state'] = 'normal'
         self.result_entry.delete(0, END)
         self.result_entry.insert(0, result)
+        self.result_entry['state'] = 'readonly'
 
     # Function to update the expression entry widget
     def update_expression(self, char):
@@ -149,15 +151,20 @@ class Calculator(tk.Tk):
 
     # Function to clear the entire expression
     def clear_all(self):
+        self.result_entry['state'] = 'normal'
         self.expression_entry.delete(0, END)
+        self.result_entry['state'] = 'normal'
         self.result_entry.delete(0, END)
+        self.result_entry['state'] = 'readonly'
 
      # Function to clear the last character
     def clear_last(self):
         expression = self.expression_entry.get()
         self.expression_entry.delete(0, END)
         self.expression_entry.insert(0, expression[:-1])
+        self.result_entry['state'] = 'normal'
         self.result_entry.delete(0, END)
+        self.result_entry['state'] = 'readonly'
 
     # Function to generate random colors for buttons
     def randomize_colors(self):
