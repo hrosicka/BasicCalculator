@@ -123,20 +123,18 @@ class Calculator(tk.Tk):
         self.previous_expression = ""
         self.result = 0
 
-        # Increase padding for buttons and entry fields
-        button_padx = 10
-        button_pady = 5
 
-        for button in self.operator_frame.pack_slaves():
-            button.config(padx=button_padx, pady=button_pady)
+        self.set_button_padding(self.operator_frame.pack_slaves())
+        
         for i in range(10):
             button = self.number_frame.grid_slaves(row=i // 3, column=i % 3)[0]
-            button.config(padx=button_padx, pady=button_pady)
-        self.dot_button.config(padx=button_padx, pady=button_pady)
-        self.equals_button.config(padx=button_padx, pady=button_pady)
-        self.c_button.config(padx=button_padx, pady=button_pady)
-        self.ce_button.config(padx=button_padx, pady=button_pady)
-        self.generate_colors_button.config(padx=button_padx, pady=button_pady)
+
+        self.set_button_padding(self.number_frame.grid_slaves())
+        self.set_button_padding(self.dot_button)
+        self.set_button_padding(self.equals_button)
+        self.set_button_padding(self.c_button)
+        self.set_button_padding(self.ce_button)
+        self.set_button_padding(self.generate_colors_button)
 
     # Function to evaluate the entered expression
     def evaluate(self, expression):
@@ -147,6 +145,8 @@ class Calculator(tk.Tk):
             return "Syntax error"
         except ZeroDivisionError:
             return "Division by zero"
+        except NameError:
+            return "Undefined variable"
         except Exception as e:
             return f"Error: {str(e)}"
 
@@ -194,6 +194,23 @@ class Calculator(tk.Tk):
         self.c_button["bg"] = random.choice(palette)
         self.ce_button["bg"] = random.choice(palette)
         self.generate_colors_button["bg"] = random.choice(palette)
+
+    def set_button_padding(self, buttons, pad_x=10, pad_y=5):
+        """Sets the padding for the given button or list of buttons.
+
+        Args:
+            buttons (Button or list[Button]): The button or list of buttons.
+            pad_x (int, optional): The padding in the horizontal direction. Defaults to 10.
+            pad_y (int, optional): The padding in the vertical direction. Defaults to 5.
+        """
+
+        if isinstance(buttons, list):
+            # If buttons is a list, iterate over each button
+            for button in buttons:
+                button.config(padx=pad_x, pady=pad_y)
+        else:
+            # If buttons is a single button, set the padding directly
+            buttons.config(padx=pad_x, pady=pad_y)
 
 
 # Run the calculator
