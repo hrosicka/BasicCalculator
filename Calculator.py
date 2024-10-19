@@ -15,8 +15,6 @@ from tkinter import (
     TOP,
 )
 
-from idlelib.tooltip import Hovertip
-
 
 class ColorPalette:
     """A class to manage the color palette for the calculator buttons."""
@@ -41,6 +39,59 @@ class ColorPalette:
     def get_random_color(self):
         """Returns a random color from the palette."""
         return random.choice(self.colors)
+    
+class Tooltip(object):
+    """
+    Creates a tooltip widget.
+
+    Args:
+        widget: The widget to which the tooltip is attached.
+        text: The text to display in the tooltip.
+        delay: The delay in milliseconds before the tooltip appears.
+        follow_mouse: Whether the tooltip should follow the mouse cursor.
+    """
+
+    def __init__(self, widget, text=None, delay=50, follow_mouse=False):
+        self.widget = widget
+        self.text = text
+        self.delay = delay
+        self.follow_mouse = follow_mouse
+        self.tipwindow = None
+        self.id = None
+        self.widget.bind("<Enter>", self.enter)
+        self.widget.bind("<Leave>", self.leave)
+
+    def enter(self, event):
+        self.schedule_tip()
+
+    def leave(self, event):
+        if self.tipwindow:
+            self.tipwindow.destroy()
+        self.tipwindow = None
+        self.id = None
+
+    def schedule_tip(self):
+        self.id = self.widget.after(self.delay, self.show_tip)
+
+    def show_tip(self):
+        if self.tipwindow:
+            return
+
+        x = y = 0
+        if self.follow_mouse:
+            x = self.widget.winfo_rootx() + self.widget.winfo_width() + 5
+            y = self.widget.winfo_rooty() + self.widget.winfo_height() + 5
+        else:
+            x = self.widget.winfo_rootx() + self.widget.winfo_width() / 2 - 20
+            y = self.widget.winfo_rooty() + self.widget.winfo_height() + 5
+
+        self.tipwindow = tk.Toplevel()
+        self.tipwindow.overrideredirect(True)
+        self.tipwindow.geometry("+%d+%d" % (x, y))
+
+        label = tk.Label(self.tipwindow, bg="plum2", text=self.text, justify=tk.LEFT, padx=2, pady=2, relief=tk.SOLID, borderwidth=1)
+        label.pack(ipadx=1)
+        self.tipwindow.lift()
 
 class Calculator(tk.Tk):
     """A simple yet functional calculator application."""
@@ -74,7 +125,7 @@ class Calculator(tk.Tk):
 
         # Tooltip for input expression
         self.expression_entry_tooltip = "Enter your mathematical expression here."
-        Hovertip(self.expression_entry, self.expression_entry_tooltip)
+        #Hovertip(self.expression_entry, self.expression_entry_tooltip)
 
         # Entry widget to display the result (right-aligned)
         self.result_entry = Entry(self.frame, width=30, justify="right", state="readonly", borderwidth=15, relief=tk.FLAT)
@@ -82,7 +133,7 @@ class Calculator(tk.Tk):
 
         # Tooltip for display the result
         self.result_entry_tooltip = "This field displays the calculated result."
-        Hovertip(self.result_entry, self.result_entry_tooltip)
+        #Hovertip(self.result_entry, self.result_entry_tooltip)
 
         # Frame to hold number buttons
         self.number_frame = Frame(self.frame)
@@ -131,13 +182,12 @@ class Calculator(tk.Tk):
 
         # Tooltip for generate random colors for buttons
         self.generate_colors_button_tooltip = "Click to change the button colors for a fun!"
-        Hovertip(self.generate_colors_button, self.generate_colors_button_tooltip)
+        #Hovertip(self.generate_colors_button, self.generate_colors_button_tooltip)
 
         # Initialize variables
         self.current_expression = ""
         self.previous_expression = ""
         self.result = 0
-
 
         self.set_button_padding(self.operator_frame.pack_slaves())
         
@@ -150,6 +200,10 @@ class Calculator(tk.Tk):
         self.set_button_padding(self.c_button)
         self.set_button_padding(self.ce_button)
         self.set_button_padding(self.generate_colors_button)
+
+        expression_entry_tooltip = Tooltip(self.expression_entry, text="Enter your mathematical expression here.")
+        result_entry_tooltip = Tooltip(self.result_entry, text="This field displays the calculated result.")
+        generate_colors_button_tooltip = Tooltip(self.generate_colors_button, text="Click to change the button colors for a fun!")
 
     # Function to evaluate the entered expression
     def evaluate(self, expression):
