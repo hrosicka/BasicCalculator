@@ -71,6 +71,8 @@ class Tooltip(object):
         self.id = None
 
     def schedule_tip(self):
+        if self.id is not None:  # Check if a timer ID exists before cancelling
+            self.widget.after_cancel(self.id)
         self.id = self.widget.after(self.delay, self.show_tip)
 
     def show_tip(self):
@@ -123,17 +125,9 @@ class Calculator(tk.Tk):
         self.expression_entry = Entry(self.frame, width=30, justify="right", borderwidth=15, relief=tk.FLAT)
         self.expression_entry.pack(side=TOP)
 
-        # Tooltip for input expression
-        self.expression_entry_tooltip = "Enter your mathematical expression here."
-        #Hovertip(self.expression_entry, self.expression_entry_tooltip)
-
         # Entry widget to display the result (right-aligned)
         self.result_entry = Entry(self.frame, width=30, justify="right", state="readonly", borderwidth=15, relief=tk.FLAT)
         self.result_entry.pack(side=TOP)
-
-        # Tooltip for display the result
-        self.result_entry_tooltip = "This field displays the calculated result."
-        #Hovertip(self.result_entry, self.result_entry_tooltip)
 
         # Frame to hold number buttons
         self.number_frame = Frame(self.frame)
@@ -180,9 +174,6 @@ class Calculator(tk.Tk):
         self.generate_colors_button = Button(self.calculation_frame, text="Colors", command=self.randomize_colors, bg="plum", width=6, height=2)
         self.generate_colors_button.pack(side=TOP)
 
-        # Tooltip for generate random colors for buttons
-        self.generate_colors_button_tooltip = "Click to change the button colors for a fun!"
-        #Hovertip(self.generate_colors_button, self.generate_colors_button_tooltip)
 
         # Initialize variables
         self.current_expression = ""
