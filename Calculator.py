@@ -43,7 +43,7 @@ class Calculator(tk.Tk):
         self.title("Calculator")
 
         # Create a frame to hold all widgets
-        self.frame = Frame(self)
+        self.frame = Frame(self, borderwidth=5, relief=tk.RIDGE)
         self.frame.pack()
 
         # Prevent user from resizing the window
@@ -54,7 +54,7 @@ class Calculator(tk.Tk):
         self.iconbitmap(self.icon_path)  
 
         # Entry widget for user to input expression (right-aligned)
-        self.expression_entry = Entry(self.frame, width=30, justify="right")
+        self.expression_entry = Entry(self.frame, width=30, justify="right", borderwidth=15, relief=tk.FLAT)
         self.expression_entry.pack(side=TOP)
 
         # Tooltip for input expression
@@ -62,7 +62,7 @@ class Calculator(tk.Tk):
         Hovertip(self.expression_entry, self.expression_entry_tooltip)
 
         # Entry widget to display the result (right-aligned)
-        self.result_entry = Entry(self.frame, width=30, justify="right", state="readonly")
+        self.result_entry = Entry(self.frame, width=30, justify="right", state="readonly", borderwidth=15, relief=tk.FLAT)
         self.result_entry.pack(side=TOP)
 
         # Tooltip for display the result
@@ -122,6 +122,21 @@ class Calculator(tk.Tk):
         self.current_expression = ""
         self.previous_expression = ""
         self.result = 0
+
+        # Increase padding for buttons and entry fields
+        button_padx = 10
+        button_pady = 5
+
+        for button in self.operator_frame.pack_slaves():
+            button.config(padx=button_padx, pady=button_pady)
+        for i in range(10):
+            button = self.number_frame.grid_slaves(row=i // 3, column=i % 3)[0]
+            button.config(padx=button_padx, pady=button_pady)
+        self.dot_button.config(padx=button_padx, pady=button_pady)
+        self.equals_button.config(padx=button_padx, pady=button_pady)
+        self.c_button.config(padx=button_padx, pady=button_pady)
+        self.ce_button.config(padx=button_padx, pady=button_pady)
+        self.generate_colors_button.config(padx=button_padx, pady=button_pady)
 
     # Function to evaluate the entered expression
     def evaluate(self, expression):
