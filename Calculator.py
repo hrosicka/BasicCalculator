@@ -43,22 +43,30 @@ class ColorPalette:
         return random.choice(self.colors)
 
 class Calculator(tk.Tk):
+    """A simple yet functional calculator application."""
 
     def __init__(self):
         super().__init__()
-        # Set window title
+
+        # Set window title and prevent resizing
         self.title("Calculator")
+        self.resizable(False, False)
+
+        # Set application icon (if "calc_icon.ico" exists)
+        self.icon_path = "calc_icon.ico"
+        try:
+            self.iconbitmap(self.icon_path)
+        except tk.TclError:
+            print(f"Warning: Could not load icon from '{self.icon_path}'.")
+        
+        self.initialize_widgets()
+
+    def initialize_widgets(self):
+        """Initializes all the widgets used in the calculator."""
 
         # Create a frame to hold all widgets
         self.frame = Frame(self, borderwidth=5, relief=tk.RIDGE)
         self.frame.pack()
-
-        # Prevent user from resizing the window
-        self.resizable(False, False) 
-
-        # Set window icon (if "calc_icon.ico" exists)
-        self.icon_path = "calc_icon.ico"  
-        self.iconbitmap(self.icon_path)  
 
         # Entry widget for user to input expression (right-aligned)
         self.expression_entry = Entry(self.frame, width=30, justify="right", borderwidth=15, relief=tk.FLAT)
@@ -76,7 +84,7 @@ class Calculator(tk.Tk):
         self.result_entry_tooltip = "This field displays the calculated result."
         Hovertip(self.result_entry, self.result_entry_tooltip)
 
-         # Frame to hold number buttons
+        # Frame to hold number buttons
         self.number_frame = Frame(self.frame)
         self.number_frame.pack(side=LEFT)
 
