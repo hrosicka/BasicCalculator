@@ -125,14 +125,15 @@ class Calculator(tk.Tk):
 
     # Function to evaluate the entered expression
     def evaluate(self, expression):
-        if expression and expression[-1] in ["+", "-", "*", "/"]:
-            return "Chybný výraz"
-        if not expression:
-            return "Zadejte výraz"
         try:
-            return eval(expression)
-        except:
-            return "Chybný výraz"
+            result = eval(expression)
+            return result
+        except SyntaxError:
+            return "Syntax error"
+        except ZeroDivisionError:
+            return "Division by zero"
+        except Exception as e:
+            return f"Error: {str(e)}"
 
     # Function to update the result entry widget
     def update_result(self, result):
