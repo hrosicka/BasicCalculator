@@ -46,6 +46,7 @@ class Calculator(tk.Tk):
         # Entry widget for user to input expression (right-aligned)
         self.expression_entry = Entry(self.frame, width=30, justify="right", borderwidth=15, relief=tk.FLAT)
         self.expression_entry.pack(side=TOP)
+        self.expression_entry.focus()
 
         # Entry widget to display the result (right-aligned)
         self.result_entry = Entry(self.frame, width=30, justify="right", state="readonly", borderwidth=15, relief=tk.FLAT)
