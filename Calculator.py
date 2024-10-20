@@ -3,7 +3,8 @@ from ctypes import windll
 windll.shcore.SetProcessDpiAwareness(1)
 
 import tkinter as tk
-import random
+from ColorPalette import *
+from Tooltip import *
 
 from tkinter import (
     Button,
@@ -15,85 +16,6 @@ from tkinter import (
     TOP,
 )
 
-
-class ColorPalette:
-    """A class to manage the color palette for the calculator buttons."""
-
-    def __init__(self):
-        self.colors = [
-            "#f5f5f5", "#e8e8e8", "#dcdcdc",
-            "#fffacd", "#ffebcd", "#f7f7bd",
-            "#f0f8ff", "#e6f5ff", "#d9ecff",
-            "#cce5ff", "#bcd2ff", "#a9bfff",
-            "#f5f5fa", "#e8e8f5", "#dcdcdc",
-            "#fffacd", "#ffebcd", "#f7f7bd",
-            "#f7d3d3", "#f0cccc", "#e6c9c9",
-            "#d9b3b3", "#c69c9c", "#b38585",
-            "#f0f5f0", "#e6f2f2", "#d9edee",
-            "#cce5e5", "#bcd2d2", "#a9bfff",
-            "#f5faf5", "#e8f8f8", "#dcdcdc",
-            "#f0f0f0", "#e6e6e6", "#dedede",
-            "#f7f7f7", "#f0f0f0", "#e6e6e6",
-            ]
-        
-    def get_random_color(self):
-        """Returns a random color from the palette."""
-        return random.choice(self.colors)
-    
-class Tooltip(object):
-    """
-    Creates a tooltip widget.
-
-    Args:
-        widget: The widget to which the tooltip is attached.
-        text: The text to display in the tooltip.
-        delay: The delay in milliseconds before the tooltip appears.
-        follow_mouse: Whether the tooltip should follow the mouse cursor.
-    """
-
-    def __init__(self, widget, text=None, delay=50, follow_mouse=False):
-        self.widget = widget
-        self.text = text
-        self.delay = delay
-        self.follow_mouse = follow_mouse
-        self.tipwindow = None
-        self.id = None
-        self.widget.bind("<Enter>", self.enter)
-        self.widget.bind("<Leave>", self.leave)
-
-    def enter(self, event):
-        self.schedule_tip()
-
-    def leave(self, event):
-        if self.tipwindow:
-            self.tipwindow.destroy()
-        self.tipwindow = None
-        self.id = None
-
-    def schedule_tip(self):
-        if self.id is not None:  # Check if a timer ID exists before cancelling
-            self.widget.after_cancel(self.id)
-        self.id = self.widget.after(self.delay, self.show_tip)
-
-    def show_tip(self):
-        if self.tipwindow:
-            return
-
-        x = y = 0
-        if self.follow_mouse:
-            x = self.widget.winfo_rootx() + self.widget.winfo_width() + 5
-            y = self.widget.winfo_rooty() + self.widget.winfo_height() + 5
-        else:
-            x = self.widget.winfo_rootx() + self.widget.winfo_width() / 2 - 20
-            y = self.widget.winfo_rooty() + self.widget.winfo_height() + 5
-
-        self.tipwindow = tk.Toplevel()
-        self.tipwindow.overrideredirect(True)
-        self.tipwindow.geometry("+%d+%d" % (x, y))
-
-        label = tk.Label(self.tipwindow, bg="plum2", text=self.text, justify=tk.LEFT, padx=2, pady=2, relief=tk.SOLID, borderwidth=1)
-        label.pack(ipadx=1)
-        self.tipwindow.lift()
 
 class Calculator(tk.Tk):
     """A simple yet functional calculator application."""
