@@ -189,11 +189,10 @@ class Calculator(tk.Tk):
         """
 
         if isinstance(buttons, list):
-            # If buttons is a list, iterate over each button
-            for button in buttons:
-                button.config(padx=pad_x, pady=pad_y)
+            # If buttons is a list, apply padding to each button using a list comprehension
+            [button.config(padx=pad_x, pady=pad_y) for button in buttons]
         else:
-            # If buttons is a single button, set the padding directly
+            # If buttons is a single button, apply padding directly
             buttons.config(padx=pad_x, pady=pad_y)
 
 
