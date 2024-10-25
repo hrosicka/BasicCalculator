@@ -21,13 +21,19 @@ class Calculator(tk.Tk):
     """A simple yet functional calculator application."""
 
     def __init__(self):
+        """
+        Initializes the calculator window and its basic properties.
+
+        - Sets window title and prevents resizing.
+        - Sets application icon (if "calc_icon.ico" exists).
+        - Creates an instance of the ColorPalette class.
+        - Calls the initialize_widgets method to create the UI elements.
+        """
         super().__init__()
 
-        # Set window title and prevent resizing
         self.title("Calculator")
         self.resizable(False, False)
 
-        # Set application icon (if "calc_icon.ico" exists)
         self.icon_path = "calc_icon.ico"
         try:
             self.iconbitmap(self.icon_path)
@@ -39,68 +45,68 @@ class Calculator(tk.Tk):
         self.initialize_widgets()
 
     def initialize_widgets(self):
-        """Initializes all the widgets used in the calculator."""
+        """
+        Initializes all the widgets used in the calculator.
 
-        # Create a frame to hold all widgets
+        - Creates frames to hold different groups of widgets (expression entry,
+          result entry, buttons, etc.).
+        - Creates buttons for numbers, operators, and other functions.
+        - Sets up tooltips for some widgets.
+        - Initializes internal variables.
+        - Sets padding for buttons using the set_button_padding function.
+        """
+
         self.frame = Frame(self, borderwidth=5, relief=tk.RIDGE)
         self.frame.pack()
 
-        # Entry widget for user to input expression (right-aligned)
         self.expression_entry = Entry(self.frame, width=30, justify="right", borderwidth=15, relief=tk.FLAT)
         self.expression_entry.pack(side=TOP)
         self.expression_entry.focus()
 
-        # Entry widget to display the result (right-aligned)
         self.result_entry = Entry(self.frame, width=30, justify="right", state="readonly", borderwidth=15, relief=tk.FLAT)
         self.result_entry.pack(side=TOP)
 
-        # Frame to hold number buttons
         self.number_frame = Frame(self.frame)
         self.number_frame.pack(side=LEFT)
 
-        # Create number buttons with increased size
         for i in range(10):
             button = Button(self.number_frame, text=str(i), command=lambda i=i: self.update_expression(str(i)), width=6, height=2)
             button.grid(row=i // 3, column=i % 3)
 
-        # Button for decimal point
         self.dot_button = Button(self.number_frame, text=".", command=lambda: self.update_expression("."), width=6, height=2)
         self.dot_button.grid(row=3, column=2)
 
-        # Frame to hold operator buttons
         self.operator_frame = Frame(self.frame)
         self.operator_frame.pack(side=LEFT)
 
-        # List of operators
         operators = ["+", "-", "*", "/"]
 
-        # Create operator buttons with increased size and light yellow background
         for operator in operators:
-            button = Button(self.operator_frame, text=operator, command=lambda operator=operator: self.update_expression(operator), bg="#FFE4C4", width=6, height=2)
+            button = Button(
+                self.operator_frame,
+                text=operator, command=lambda operator=operator: self.update_expression(operator),
+                bg="#FFE4C4",
+                width=6, 
+                height=2
+            )
             button.pack(side=TOP)
 
-        # Frame to hold buttons for calculation and clearing
         self.calculation_frame = Frame(self.frame)
         self.calculation_frame.pack(side=LEFT)
 
-        # Button to evaluate the expression (light plum background)
         self.equals_button = Button(self.calculation_frame, text="=", command=lambda: self.update_result(self.evaluate(self.expression_entry.get())), bg="plum", width=6, height=2)
         self.equals_button.pack(side=TOP)
 
-        # Button to clear the entire expression (light plum background)
         self.c_button = Button(self.calculation_frame, text="C", command=self.clear_all, bg="plum", width=6, height=2)
         self.c_button.pack(side=TOP)
 
-        # Button to clear the last character (light plum background)
         self.ce_button = Button(self.calculation_frame, text="CE", command=self.clear_last, bg="plum", width=6, height=2)
         self.ce_button.pack(side=TOP)
 
-        # Button to generate random colors for buttons (light plum background)
         self.generate_colors_button = Button(self.calculation_frame, text="Colors", command=self.randomize_colors, bg="plum", width=6, height=2)
         self.generate_colors_button.pack(side=TOP)
 
 
-        # Initialize variables
         self.current_expression = ""
         self.previous_expression = ""
         self.result = 0
@@ -123,6 +129,15 @@ class Calculator(tk.Tk):
 
     # Function to evaluate the entered expression
     def evaluate(self, expression):
+        """
+        Evaluates the given mathematical expression.
+        Args:
+            expression (str): The mathematical expression to be evaluated.
+        Returns:
+            string (str): The result of the evaluation or an error message if the evaluation fails.
+        Raises:
+            Exceptions: The function handles potential exceptions like SyntaxError, ZeroDivisionError, NameError, and other general exceptions.
+        """
         try:
             result = eval(expression)
             return result
