@@ -3,7 +3,7 @@ from ctypes import windll
 windll.shcore.SetProcessDpiAwareness(1)
 
 import tkinter as tk
-from ColorPalette import *
+from ColorPalette import ColorPalette
 from Tooltip import *
 
 from tkinter import (
@@ -34,6 +34,8 @@ class Calculator(tk.Tk):
         except tk.TclError:
             print(f"Warning: Could not load icon from '{self.icon_path}'.")
         
+        self.color_palette = ColorPalette()
+
         self.initialize_widgets()
 
     def initialize_widgets(self):
@@ -167,17 +169,16 @@ class Calculator(tk.Tk):
 
     # Function to generate random colors for buttons
     def randomize_colors(self):
-        color_palette = ColorPalette()
         for button in self.operator_frame.pack_slaves():
-            button["bg"] = color_palette.get_random_color()
+            button["bg"] = self.color_palette.get_random_color()
         for i in range(10):
             button = self.number_frame.grid_slaves(row=i // 3, column=i % 3)[0]
-            button["bg"] = color_palette.get_random_color()
-        self.dot_button["bg"] = color_palette.get_random_color()
-        self.equals_button["bg"] = color_palette.get_random_color()
-        self.c_button["bg"] = color_palette.get_random_color()
-        self.ce_button["bg"] = color_palette.get_random_color()
-        self.generate_colors_button["bg"] = color_palette.get_random_color()
+            button["bg"] = self.color_palette.get_random_color()
+        self.dot_button["bg"] = self.color_palette.get_random_color()
+        self.equals_button["bg"] = self.color_palette.get_random_color()
+        self.c_button["bg"] = self.color_palette.get_random_color()
+        self.ce_button["bg"] = self.color_palette.get_random_color()
+        self.generate_colors_button["bg"] = self.color_palette.get_random_color()
 
     def set_button_padding(self, buttons, pad_x=10, pad_y=5):
         """Sets the padding for the given button or list of buttons.
