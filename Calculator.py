@@ -56,34 +56,34 @@ class Calculator(tk.Tk):
         - Sets padding for buttons using the set_button_padding function.
         """
 
-        self.frame = Frame(self, borderwidth=5, relief=tk.RIDGE)
-        self.frame.pack()
+        self.main_container = Frame(self, borderwidth=5, relief=tk.RIDGE)
+        self.main_container.pack()
 
-        self.expression_entry = Entry(self.frame, width=30, justify="right", borderwidth=15, relief=tk.FLAT)
-        self.expression_entry.pack(side=TOP)
-        self.expression_entry.focus()
+        self.expression_display = Entry(self.main_container, width=30, justify="right", borderwidth=15, relief=tk.FLAT)
+        self.expression_display.pack(side=TOP)
+        self.expression_display.focus()
 
-        self.result_entry = Entry(self.frame, width=30, justify="right", state="readonly", borderwidth=15, relief=tk.FLAT)
-        self.result_entry.pack(side=TOP)
+        self.result_display = Entry(self.main_container, width=30, justify="right", state="readonly", borderwidth=15, relief=tk.FLAT)
+        self.result_display.pack(side=TOP)
 
-        self.number_frame = Frame(self.frame)
-        self.number_frame.pack(side=LEFT)
+        self.number_button_frame = Frame(self.main_container)
+        self.number_button_frame.pack(side=LEFT)
 
         for i in range(10):
-            button = Button(self.number_frame, text=str(i), command=lambda i=i: self.update_expression(str(i)), width=6, height=2)
+            button = Button(self.number_button_frame, text=str(i), command=lambda i=i: self.update_expression(str(i)), width=6, height=2)
             button.grid(row=i // 3, column=i % 3)
 
-        self.dot_button = Button(self.number_frame, text=".", command=lambda: self.update_expression("."), width=6, height=2)
+        self.dot_button = Button(self.number_button_frame, text=".", command=lambda: self.update_expression("."), width=6, height=2)
         self.dot_button.grid(row=3, column=2)
 
-        self.operator_frame = Frame(self.frame)
-        self.operator_frame.pack(side=LEFT)
+        self.operator_button_frame = Frame(self.main_container)
+        self.operator_button_frame.pack(side=LEFT)
 
         operators = ["+", "-", "*", "/"]
 
         for operator in operators:
             button = Button(
-                self.operator_frame,
+                self.operator_button_frame,
                 text=operator, command=lambda operator=operator: self.update_expression(operator),
                 bg="#FFE4C4",
                 width=6, 
@@ -91,19 +91,19 @@ class Calculator(tk.Tk):
             )
             button.pack(side=TOP)
 
-        self.calculation_frame = Frame(self.frame)
-        self.calculation_frame.pack(side=LEFT)
+        self.function_button_frame = Frame(self.main_container)
+        self.function_button_frame.pack(side=LEFT)
 
-        self.equals_button = Button(self.calculation_frame, text="=", command=lambda: self.update_result(self.evaluate(self.expression_entry.get())), bg="plum", width=6, height=2)
-        self.equals_button.pack(side=TOP)
+        self.evaluate_button = Button(self.function_button_frame, text="=", command=lambda: self.update_result(self.evaluate(self.expression_display.get())), bg="plum", width=6, height=2)
+        self.evaluate_button.pack(side=TOP)
 
-        self.c_button = Button(self.calculation_frame, text="C", command=self.clear_all, bg="plum", width=6, height=2)
+        self.c_button = Button(self.function_button_frame, text="C", command=self.clear_all, bg="plum", width=6, height=2)
         self.c_button.pack(side=TOP)
 
-        self.ce_button = Button(self.calculation_frame, text="CE", command=self.clear_last, bg="plum", width=6, height=2)
+        self.ce_button = Button(self.function_button_frame, text="CE", command=self.clear_last, bg="plum", width=6, height=2)
         self.ce_button.pack(side=TOP)
 
-        self.generate_colors_button = Button(self.calculation_frame, text="Colors", command=self.randomize_colors, bg="plum", width=6, height=2)
+        self.generate_colors_button = Button(self.function_button_frame, text="Colors", command=self.randomize_colors, bg="plum", width=6, height=2)
         self.generate_colors_button.pack(side=TOP)
 
 
@@ -111,20 +111,20 @@ class Calculator(tk.Tk):
         self.previous_expression = ""
         self.result = 0
 
-        self.set_button_padding(self.operator_frame.pack_slaves())
+        self.set_button_padding(self.operator_button_frame.pack_slaves())
         
         for i in range(10):
-            button = self.number_frame.grid_slaves(row=i // 3, column=i % 3)[0]
+            button = self.number_button_frame.grid_slaves(row=i // 3, column=i % 3)[0]
 
-        self.set_button_padding(self.number_frame.grid_slaves())
+        self.set_button_padding(self.number_button_frame.grid_slaves())
         self.set_button_padding(self.dot_button)
-        self.set_button_padding(self.equals_button)
+        self.set_button_padding(self.evaluate_button)
         self.set_button_padding(self.c_button)
         self.set_button_padding(self.ce_button)
         self.set_button_padding(self.generate_colors_button)
 
-        expression_entry_tooltip = Tooltip(self.expression_entry, text="Enter your mathematical expression here.")
-        result_entry_tooltip = Tooltip(self.result_entry, text="This field displays the calculated result.")
+        expression_entry_tooltip = Tooltip(self.expression_display, text="Enter your mathematical expression here.")
+        result_entry_tooltip = Tooltip(self.result_display, text="This field displays the calculated result.")
         generate_colors_button_tooltip = Tooltip(self.generate_colors_button, text="Click to change the button colors for a fun!")
 
     # Function to evaluate the entered expression
@@ -152,45 +152,45 @@ class Calculator(tk.Tk):
 
     # Function to update the result entry widget
     def update_result(self, result):
-        self.result_entry['state'] = 'normal'
-        self.result_entry.delete(0, END)
-        self.result_entry.insert(0, result)
-        self.result_entry['state'] = 'readonly'
+        self.result_display['state'] = 'normal'
+        self.result_display.delete(0, END)
+        self.result_display.insert(0, result)
+        self.result_display['state'] = 'readonly'
 
     # Function to update the expression entry widget
     def update_expression(self, char):
-        self.current_expression = self.expression_entry.get()
-        cursor_position = self.expression_entry.index(INSERT)
+        self.current_expression = self.expression_display.get()
+        cursor_position = self.expression_display.index(INSERT)
         new_expression = self.current_expression[:cursor_position] + char + self.current_expression[cursor_position:]
-        self.expression_entry.delete(0, END)
-        self.expression_entry.insert(0, new_expression)
+        self.expression_display.delete(0, END)
+        self.expression_display.insert(0, new_expression)
 
     # Function to clear the entire expression
     def clear_all(self):
-        self.result_entry['state'] = 'normal'
-        self.expression_entry.delete(0, END)
-        self.result_entry['state'] = 'normal'
-        self.result_entry.delete(0, END)
-        self.result_entry['state'] = 'readonly'
+        self.result_display['state'] = 'normal'
+        self.expression_display.delete(0, END)
+        self.result_display['state'] = 'normal'
+        self.result_display.delete(0, END)
+        self.result_display['state'] = 'readonly'
 
      # Function to clear the last character
     def clear_last(self):
-        expression = self.expression_entry.get()
-        self.expression_entry.delete(0, END)
-        self.expression_entry.insert(0, expression[:-1])
-        self.result_entry['state'] = 'normal'
-        self.result_entry.delete(0, END)
-        self.result_entry['state'] = 'readonly'
+        expression = self.expression_display.get()
+        self.expression_display.delete(0, END)
+        self.expression_display.insert(0, expression[:-1])
+        self.result_display['state'] = 'normal'
+        self.result_display.delete(0, END)
+        self.result_display['state'] = 'readonly'
 
     # Function to generate random colors for buttons
     def randomize_colors(self):
-        for button in self.operator_frame.pack_slaves():
+        for button in self.operator_button_frame.pack_slaves():
             button["bg"] = self.color_palette.get_random_color()
         for i in range(10):
-            button = self.number_frame.grid_slaves(row=i // 3, column=i % 3)[0]
+            button = self.number_button_frame.grid_slaves(row=i // 3, column=i % 3)[0]
             button["bg"] = self.color_palette.get_random_color()
         self.dot_button["bg"] = self.color_palette.get_random_color()
-        self.equals_button["bg"] = self.color_palette.get_random_color()
+        self.evaluate_button["bg"] = self.color_palette.get_random_color()
         self.c_button["bg"] = self.color_palette.get_random_color()
         self.ce_button["bg"] = self.color_palette.get_random_color()
         self.generate_colors_button["bg"] = self.color_palette.get_random_color()
